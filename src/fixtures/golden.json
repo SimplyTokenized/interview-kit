@@ -1,0 +1,1060 @@
+{
+  "note": "Shared truth for @simplytokenized/interview-kit. `cases` cover document assembly; `runs` cover the interview runner. Both the network manager and st-backend-v2 assert against this file — a rule change not reflected here is a change one side has made alone.",
+  "definition": {
+    "defaultLocale": "de",
+    "steps": [
+      {
+        "questions": [
+          {
+            "factKey": "recipients",
+            "options": [
+              {
+                "id": "hosting",
+                "label": {
+                  "de": "Hosting-Anbieter",
+                  "en": "Hosting provider"
+                }
+              },
+              {
+                "id": "payment",
+                "label": {
+                  "de": "Zahlungsdienstleister",
+                  "en": "Payment provider"
+                }
+              }
+            ]
+          },
+          {
+            "factKey": "country",
+            "options": [
+              {
+                "id": "de",
+                "label": {
+                  "de": "Deutschland"
+                }
+              },
+              {
+                "id": "at",
+                "label": {
+                  "de": "Österreich"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "no facts keeps every variant and one copy of each repeat",
+      "html": "<span data-interview-condition=\"{&quot;mode&quot;: &quot;all&quot;, &quot;rules&quot;: [{&quot;factKey&quot;: &quot;a&quot;, &quot;op&quot;: &quot;is_true&quot;}]}\"><p>A</p></span><span data-interview-condition=\"{&quot;mode&quot;: &quot;all&quot;, &quot;rules&quot;: [{&quot;factKey&quot;: &quot;b&quot;, &quot;op&quot;: &quot;is_true&quot;}]}\"><p>B</p></span><div data-interview-repeat=\"recipients\"><p>{{item.label}}</p></div>",
+      "options": {},
+      "expected": "<p>A</p><p>B</p><p>{{item.label}}</p>"
+    },
+    {
+      "name": "a failing condition removes its passage",
+      "html": "<span data-interview-condition=\"{&quot;mode&quot;: &quot;all&quot;, &quot;rules&quot;: [{&quot;factKey&quot;: &quot;a&quot;, &quot;op&quot;: &quot;is_true&quot;}]}\"><p>A</p></span><span data-interview-condition=\"{&quot;mode&quot;: &quot;all&quot;, &quot;rules&quot;: [{&quot;factKey&quot;: &quot;b&quot;, &quot;op&quot;: &quot;is_true&quot;}]}\"><p>B</p></span>",
+      "options": {
+        "facts": {
+          "a": true,
+          "b": false
+        },
+        "definition": {
+          "defaultLocale": "de",
+          "steps": [
+            {
+              "questions": [
+                {
+                  "factKey": "recipients",
+                  "options": [
+                    {
+                      "id": "hosting",
+                      "label": {
+                        "de": "Hosting-Anbieter",
+                        "en": "Hosting provider"
+                      }
+                    },
+                    {
+                      "id": "payment",
+                      "label": {
+                        "de": "Zahlungsdienstleister",
+                        "en": "Payment provider"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "factKey": "country",
+                  "options": [
+                    {
+                      "id": "de",
+                      "label": {
+                        "de": "Deutschland"
+                      }
+                    },
+                    {
+                      "id": "at",
+                      "label": {
+                        "de": "Österreich"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "expected": "<p>A</p>"
+    },
+    {
+      "name": "is_false passes on an unset fact",
+      "html": "<span data-interview-condition=\"{&quot;mode&quot;: &quot;all&quot;, &quot;rules&quot;: [{&quot;factKey&quot;: &quot;x&quot;, &quot;op&quot;: &quot;is_false&quot;}]}\"><p>Standard</p></span>",
+      "options": {
+        "facts": {},
+        "definition": {
+          "defaultLocale": "de",
+          "steps": [
+            {
+              "questions": [
+                {
+                  "factKey": "recipients",
+                  "options": [
+                    {
+                      "id": "hosting",
+                      "label": {
+                        "de": "Hosting-Anbieter",
+                        "en": "Hosting provider"
+                      }
+                    },
+                    {
+                      "id": "payment",
+                      "label": {
+                        "de": "Zahlungsdienstleister",
+                        "en": "Payment provider"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "factKey": "country",
+                  "options": [
+                    {
+                      "id": "de",
+                      "label": {
+                        "de": "Deutschland"
+                      }
+                    },
+                    {
+                      "id": "at",
+                      "label": {
+                        "de": "Österreich"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "expected": "<p>Standard</p>"
+    },
+    {
+      "name": "nested passages evaluate independently",
+      "html": "<span data-interview-condition=\"{&quot;mode&quot;: &quot;all&quot;, &quot;rules&quot;: [{&quot;factKey&quot;: &quot;outer&quot;, &quot;op&quot;: &quot;is_true&quot;}]}\">Außen <span data-interview-condition=\"{&quot;mode&quot;: &quot;all&quot;, &quot;rules&quot;: [{&quot;factKey&quot;: &quot;inner&quot;, &quot;op&quot;: &quot;is_true&quot;}]}\">innen</span></span>",
+      "options": {
+        "facts": {
+          "outer": true,
+          "inner": false
+        },
+        "definition": {
+          "defaultLocale": "de",
+          "steps": [
+            {
+              "questions": [
+                {
+                  "factKey": "recipients",
+                  "options": [
+                    {
+                      "id": "hosting",
+                      "label": {
+                        "de": "Hosting-Anbieter",
+                        "en": "Hosting provider"
+                      }
+                    },
+                    {
+                      "id": "payment",
+                      "label": {
+                        "de": "Zahlungsdienstleister",
+                        "en": "Payment provider"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "factKey": "country",
+                  "options": [
+                    {
+                      "id": "de",
+                      "label": {
+                        "de": "Deutschland"
+                      }
+                    },
+                    {
+                      "id": "at",
+                      "label": {
+                        "de": "Österreich"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "expected": "Außen "
+    },
+    {
+      "name": "a malformed condition FAILS OPEN and keeps its text",
+      "html": "<span data-interview-condition=\"{not json\"><p>Wichtig</p></span>",
+      "options": {
+        "facts": {},
+        "definition": {
+          "defaultLocale": "de",
+          "steps": [
+            {
+              "questions": [
+                {
+                  "factKey": "recipients",
+                  "options": [
+                    {
+                      "id": "hosting",
+                      "label": {
+                        "de": "Hosting-Anbieter",
+                        "en": "Hosting provider"
+                      }
+                    },
+                    {
+                      "id": "payment",
+                      "label": {
+                        "de": "Zahlungsdienstleister",
+                        "en": "Payment provider"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "factKey": "country",
+                  "options": [
+                    {
+                      "id": "de",
+                      "label": {
+                        "de": "Deutschland"
+                      }
+                    },
+                    {
+                      "id": "at",
+                      "label": {
+                        "de": "Österreich"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "expected": "<p>Wichtig</p>"
+    },
+    {
+      "name": "one copy per selected answer, in answer order, with labels",
+      "html": "<div data-interview-repeat=\"recipients\"><p>{{item.label}} ({{item.value}})</p></div>",
+      "options": {
+        "facts": {
+          "recipients": [
+            "payment",
+            "hosting"
+          ]
+        },
+        "definition": {
+          "defaultLocale": "de",
+          "steps": [
+            {
+              "questions": [
+                {
+                  "factKey": "recipients",
+                  "options": [
+                    {
+                      "id": "hosting",
+                      "label": {
+                        "de": "Hosting-Anbieter",
+                        "en": "Hosting provider"
+                      }
+                    },
+                    {
+                      "id": "payment",
+                      "label": {
+                        "de": "Zahlungsdienstleister",
+                        "en": "Payment provider"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "factKey": "country",
+                  "options": [
+                    {
+                      "id": "de",
+                      "label": {
+                        "de": "Deutschland"
+                      }
+                    },
+                    {
+                      "id": "at",
+                      "label": {
+                        "de": "Österreich"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "expected": "<p>Zahlungsdienstleister (payment)</p><p>Hosting-Anbieter (hosting)</p>"
+    },
+    {
+      "name": "labels follow the requested locale",
+      "html": "<div data-interview-repeat=\"recipients\"><p>{{item.label}}</p></div>",
+      "options": {
+        "facts": {
+          "recipients": [
+            "hosting"
+          ]
+        },
+        "definition": {
+          "defaultLocale": "de",
+          "steps": [
+            {
+              "questions": [
+                {
+                  "factKey": "recipients",
+                  "options": [
+                    {
+                      "id": "hosting",
+                      "label": {
+                        "de": "Hosting-Anbieter",
+                        "en": "Hosting provider"
+                      }
+                    },
+                    {
+                      "id": "payment",
+                      "label": {
+                        "de": "Zahlungsdienstleister",
+                        "en": "Payment provider"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "factKey": "country",
+                  "options": [
+                    {
+                      "id": "de",
+                      "label": {
+                        "de": "Deutschland"
+                      }
+                    },
+                    {
+                      "id": "at",
+                      "label": {
+                        "de": "Österreich"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "locale": "en"
+      },
+      "expected": "<p>Hosting provider</p>"
+    },
+    {
+      "name": "an empty or non-list answer emits nothing",
+      "html": "<div data-interview-repeat=\"recipients\"><p>{{item.label}}</p></div>",
+      "options": {
+        "facts": {
+          "recipients": []
+        },
+        "definition": {
+          "defaultLocale": "de",
+          "steps": [
+            {
+              "questions": [
+                {
+                  "factKey": "recipients",
+                  "options": [
+                    {
+                      "id": "hosting",
+                      "label": {
+                        "de": "Hosting-Anbieter",
+                        "en": "Hosting provider"
+                      }
+                    },
+                    {
+                      "id": "payment",
+                      "label": {
+                        "de": "Zahlungsdienstleister",
+                        "en": "Payment provider"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "factKey": "country",
+                  "options": [
+                    {
+                      "id": "de",
+                      "label": {
+                        "de": "Deutschland"
+                      }
+                    },
+                    {
+                      "id": "at",
+                      "label": {
+                        "de": "Österreich"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "expected": ""
+    },
+    {
+      "name": "ORDER: repeats expand before conditions, so each copy is judged",
+      "html": "<div data-interview-repeat=\"recipients\"><span data-interview-condition=\"{&quot;mode&quot;: &quot;all&quot;, &quot;rules&quot;: [{&quot;factKey&quot;: &quot;show&quot;, &quot;op&quot;: &quot;is_true&quot;}]}\"><p>{{item.label}}</p></span></div>",
+      "options": {
+        "facts": {
+          "recipients": [
+            "hosting",
+            "payment"
+          ],
+          "show": true
+        },
+        "definition": {
+          "defaultLocale": "de",
+          "steps": [
+            {
+              "questions": [
+                {
+                  "factKey": "recipients",
+                  "options": [
+                    {
+                      "id": "hosting",
+                      "label": {
+                        "de": "Hosting-Anbieter",
+                        "en": "Hosting provider"
+                      }
+                    },
+                    {
+                      "id": "payment",
+                      "label": {
+                        "de": "Zahlungsdienstleister",
+                        "en": "Payment provider"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "factKey": "country",
+                  "options": [
+                    {
+                      "id": "de",
+                      "label": {
+                        "de": "Deutschland"
+                      }
+                    },
+                    {
+                      "id": "at",
+                      "label": {
+                        "de": "Österreich"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "expected": "<p>Hosting-Anbieter</p><p>Zahlungsdienstleister</p>"
+    },
+    {
+      "name": "a condition inside a repeat can remove every copy",
+      "html": "<div data-interview-repeat=\"recipients\"><span data-interview-condition=\"{&quot;mode&quot;: &quot;all&quot;, &quot;rules&quot;: [{&quot;factKey&quot;: &quot;show&quot;, &quot;op&quot;: &quot;is_true&quot;}]}\"><p>{{item.label}}</p></span></div>",
+      "options": {
+        "facts": {
+          "recipients": [
+            "hosting"
+          ],
+          "show": false
+        },
+        "definition": {
+          "defaultLocale": "de",
+          "steps": [
+            {
+              "questions": [
+                {
+                  "factKey": "recipients",
+                  "options": [
+                    {
+                      "id": "hosting",
+                      "label": {
+                        "de": "Hosting-Anbieter",
+                        "en": "Hosting provider"
+                      }
+                    },
+                    {
+                      "id": "payment",
+                      "label": {
+                        "de": "Zahlungsdienstleister",
+                        "en": "Payment provider"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "factKey": "country",
+                  "options": [
+                    {
+                      "id": "de",
+                      "label": {
+                        "de": "Deutschland"
+                      }
+                    },
+                    {
+                      "id": "at",
+                      "label": {
+                        "de": "Österreich"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "expected": ""
+    },
+    {
+      "name": "a repeat inside a condition is gated as a whole",
+      "html": "<span data-interview-condition=\"{&quot;mode&quot;: &quot;all&quot;, &quot;rules&quot;: [{&quot;factKey&quot;: &quot;country&quot;, &quot;op&quot;: &quot;eq&quot;, &quot;value&quot;: &quot;de&quot;}]}\"><div data-interview-repeat=\"recipients\"><p>{{item.label}}</p></div></span>",
+      "options": {
+        "facts": {
+          "country": "at",
+          "recipients": [
+            "hosting"
+          ]
+        },
+        "definition": {
+          "defaultLocale": "de",
+          "steps": [
+            {
+              "questions": [
+                {
+                  "factKey": "recipients",
+                  "options": [
+                    {
+                      "id": "hosting",
+                      "label": {
+                        "de": "Hosting-Anbieter",
+                        "en": "Hosting provider"
+                      }
+                    },
+                    {
+                      "id": "payment",
+                      "label": {
+                        "de": "Zahlungsdienstleister",
+                        "en": "Payment provider"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "factKey": "country",
+                  "options": [
+                    {
+                      "id": "de",
+                      "label": {
+                        "de": "Deutschland"
+                      }
+                    },
+                    {
+                      "id": "at",
+                      "label": {
+                        "de": "Österreich"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "expected": ""
+    },
+    {
+      "name": "ordinary spans and divs pass through untouched",
+      "html": "<div class=\"x\"><p>a</p></div><span class=\"y\">b</span>",
+      "options": {
+        "facts": {},
+        "definition": {
+          "defaultLocale": "de",
+          "steps": [
+            {
+              "questions": [
+                {
+                  "factKey": "recipients",
+                  "options": [
+                    {
+                      "id": "hosting",
+                      "label": {
+                        "de": "Hosting-Anbieter",
+                        "en": "Hosting provider"
+                      }
+                    },
+                    {
+                      "id": "payment",
+                      "label": {
+                        "de": "Zahlungsdienstleister",
+                        "en": "Payment provider"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "factKey": "country",
+                  "options": [
+                    {
+                      "id": "de",
+                      "label": {
+                        "de": "Deutschland"
+                      }
+                    },
+                    {
+                      "id": "at",
+                      "label": {
+                        "de": "Österreich"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "expected": "<div class=\"x\"><p>a</p></div><span class=\"y\">b</span>"
+    },
+    {
+      "name": "a deleted option falls back to its raw id",
+      "html": "<div data-interview-repeat=\"recipients\"><p>{{item.label}}</p></div>",
+      "options": {
+        "facts": {
+          "recipients": [
+            "gone"
+          ]
+        },
+        "definition": {
+          "defaultLocale": "de",
+          "steps": [
+            {
+              "questions": [
+                {
+                  "factKey": "recipients",
+                  "options": [
+                    {
+                      "id": "hosting",
+                      "label": {
+                        "de": "Hosting-Anbieter",
+                        "en": "Hosting provider"
+                      }
+                    },
+                    {
+                      "id": "payment",
+                      "label": {
+                        "de": "Zahlungsdienstleister",
+                        "en": "Payment provider"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "factKey": "country",
+                  "options": [
+                    {
+                      "id": "de",
+                      "label": {
+                        "de": "Deutschland"
+                      }
+                    },
+                    {
+                      "id": "at",
+                      "label": {
+                        "de": "Österreich"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "expected": "<p>gone</p>"
+    }
+  ],
+  "runs": {
+    "definition": {
+      "schemaVersion": 2,
+      "defaultLocale": "de",
+      "locales": [
+        "de"
+      ],
+      "disqualifiers": [
+        {
+          "when": {
+            "mode": "all",
+            "rules": [
+              {
+                "factKey": "processes_data",
+                "op": "is_false"
+              }
+            ]
+          },
+          "message": {
+            "de": "Ohne Datenverarbeitung ist keine Datenschutzerklärung nötig."
+          }
+        }
+      ],
+      "steps": [
+        {
+          "id": "s1",
+          "key": "basics",
+          "title": {
+            "de": "Grundangaben"
+          },
+          "questions": [
+            {
+              "id": "processes_data_id",
+              "required": true,
+              "factKey": "processes_data",
+              "answerType": "boolean",
+              "plainQuestion": {
+                "de": "Verarbeiten Sie Daten?"
+              }
+            },
+            {
+              "id": "country_id",
+              "required": true,
+              "factKey": "country",
+              "answerType": "single",
+              "plainQuestion": {
+                "de": "Sitzland?"
+              },
+              "options": [
+                {
+                  "id": "de",
+                  "label": {
+                    "de": "Deutschland"
+                  }
+                },
+                {
+                  "id": "at",
+                  "label": {
+                    "de": "Österreich"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "s2",
+          "key": "de_only",
+          "title": {
+            "de": "Nur Deutschland"
+          },
+          "showWhen": {
+            "mode": "all",
+            "rules": [
+              {
+                "factKey": "country",
+                "op": "eq",
+                "value": "de"
+              }
+            ]
+          },
+          "questions": [
+            {
+              "id": "has_dpo_id",
+              "required": true,
+              "factKey": "has_dpo",
+              "answerType": "boolean",
+              "plainQuestion": {
+                "de": "Datenschutzbeauftragter?"
+              }
+            }
+          ]
+        },
+        {
+          "id": "s3",
+          "key": "detail",
+          "title": {
+            "de": "Details"
+          },
+          "questions": [
+            {
+              "id": "dpo_name_id",
+              "required": true,
+              "factKey": "dpo_name",
+              "answerType": "text",
+              "plainQuestion": {
+                "de": "Name des DSB?"
+              },
+              "askWhen": {
+                "mode": "all",
+                "rules": [
+                  {
+                    "factKey": "has_dpo",
+                    "op": "is_true"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "notes_id",
+              "required": false,
+              "factKey": "notes",
+              "answerType": "text",
+              "allowUnknown": true,
+              "plainQuestion": {
+                "de": "Anmerkungen?"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cases": [
+      {
+        "name": "stops at the first unanswered required question and folds nothing after it",
+        "answers": {},
+        "expect": {
+          "facts": {},
+          "pendingFactKey": "processes_data",
+          "complete": false,
+          "askedFactKeys": [
+            "processes_data",
+            "country",
+            "notes"
+          ],
+          "terminal": null
+        }
+      },
+      {
+        "name": "a step whose showWhen fails is skipped entirely",
+        "answers": {
+          "processes_data": {
+            "value": true
+          },
+          "country": {
+            "value": "at"
+          }
+        },
+        "expect": {
+          "facts": {
+            "processes_data": true,
+            "country": "at"
+          },
+          "pendingFactKey": null,
+          "complete": true,
+          "askedFactKeys": [
+            "processes_data",
+            "country",
+            "notes"
+          ],
+          "terminal": "assemble"
+        }
+      },
+      {
+        "name": "a question whose askWhen fails is not asked",
+        "answers": {
+          "processes_data": {
+            "value": true
+          },
+          "country": {
+            "value": "de"
+          },
+          "has_dpo": {
+            "value": false
+          }
+        },
+        "expect": {
+          "facts": {
+            "processes_data": true,
+            "country": "de",
+            "has_dpo": false
+          },
+          "pendingFactKey": null,
+          "complete": true,
+          "askedFactKeys": [
+            "processes_data",
+            "country",
+            "has_dpo",
+            "notes"
+          ],
+          "terminal": "assemble"
+        }
+      },
+      {
+        "name": "flipping the gate reveals the dependent question",
+        "answers": {
+          "processes_data": {
+            "value": true
+          },
+          "country": {
+            "value": "de"
+          },
+          "has_dpo": {
+            "value": true
+          }
+        },
+        "expect": {
+          "facts": {
+            "processes_data": true,
+            "country": "de",
+            "has_dpo": true
+          },
+          "pendingFactKey": "dpo_name",
+          "complete": false,
+          "askedFactKeys": [
+            "processes_data",
+            "country",
+            "has_dpo",
+            "dpo_name",
+            "notes"
+          ],
+          "terminal": null
+        }
+      },
+      {
+        "name": "a stale answer for a question no longer asked does NOT enter the facts",
+        "answers": {
+          "processes_data": {
+            "value": true
+          },
+          "country": {
+            "value": "at"
+          },
+          "has_dpo": {
+            "value": true
+          },
+          "dpo_name": {
+            "value": "Frau Meier"
+          }
+        },
+        "expect": {
+          "facts": {
+            "processes_data": true,
+            "country": "at"
+          },
+          "pendingFactKey": null,
+          "complete": true,
+          "askedFactKeys": [
+            "processes_data",
+            "country",
+            "notes"
+          ],
+          "terminal": "assemble"
+        }
+      },
+      {
+        "name": "a disqualifier stops the run and marks it not applicable",
+        "answers": {
+          "processes_data": {
+            "value": false
+          }
+        },
+        "expect": {
+          "facts": {
+            "processes_data": false
+          },
+          "pendingFactKey": null,
+          "complete": false,
+          "askedFactKeys": [
+            "processes_data"
+          ],
+          "terminal": "not_applicable"
+        }
+      },
+      {
+        "name": "an unanswered question never disqualifies — is_false must not fire before it is asked",
+        "answers": {},
+        "expect": {
+          "terminal": null
+        }
+      },
+      {
+        "name": "'don't know' records an open point and keeps going",
+        "answers": {
+          "processes_data": {
+            "value": true
+          },
+          "country": {
+            "value": "at"
+          },
+          "notes": {
+            "unknown": true,
+            "note": "Kläre ich noch"
+          }
+        },
+        "expect": {
+          "openPointFactKeys": [
+            "notes"
+          ],
+          "complete": true,
+          "terminal": "assemble"
+        }
+      },
+      {
+        "name": "an optional gap is stepped over rather than blocking",
+        "answers": {
+          "processes_data": {
+            "value": true
+          },
+          "country": {
+            "value": "at"
+          }
+        },
+        "expect": {
+          "pendingFactKey": null,
+          "complete": true
+        }
+      }
+    ]
+  }
+}
